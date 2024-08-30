@@ -9,11 +9,13 @@
         </p>
     </header>
 
+    <!-- Form for sending email verification -->
     <form id="send-verification" method="post" action="{{ route('verification.send') }}">
         @csrf
     </form>
 
-    <form method="post" action="{{ route('profile.update') }}" class="mt-6 space-y-6">
+    <!-- Form for updating profile information -->
+    <form method="post" action="{{ route('profile.update') }}" class="mt-6 space-y-6" enctype="multipart/form-data">
         @csrf
         @method('patch')
 
@@ -46,6 +48,17 @@
                 </div>
             @endif
         </div>
+
+        <div class="form-group">
+            <label for="photo">Photo</label>
+            <input type="file" id="photo" name="photo" />
+        </div>
+
+        @if ($user->photo)
+            <div class="form-group">
+                <img src="{{ asset('storage/' . $user->photo) }}" alt="user Photo" class="user-photo">
+            </div>
+        @endif
 
         <div class="flex items-center gap-4">
             <x-primary-button>{{ __('Save') }}</x-primary-button>
