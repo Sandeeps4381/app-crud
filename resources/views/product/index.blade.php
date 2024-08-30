@@ -163,9 +163,91 @@
                 @endforeach
             </tbody>
         </table>
+        <div id="paginationControls">
+        <span id="pageInfo"></span>
+        <button id="prevPage">Previous</button>
+    <span id="pageButtons"></span> <!-- Container for dynamic page buttons -->
+    <button id="nextPage">Next</button>
+</div>
     </div>
 
     <script>
+const rowsPerPage = 3; // Number of rows per page
+let currentPage = 1;
+
+function displayProductTable() {
+    const table = document.getElementById("productTable");
+    const rows = table.getElementsByTagName("tbody")[0].getElementsByTagName("tr");
+    const totalRows = rows.length;
+    const totalPages = Math.ceil(totalRows / rowsPerPage);
+
+    // Hide all rows initially
+    for (let i = 0; i < totalRows; i++) {
+        rows[i].style.display = "none";
+    }
+
+    // Calculate the start and end index of the rows to be displayed on the current page
+    const startIndex = (currentPage - 1) * rowsPerPage;
+    const endIndex = Math.min(startIndex + rowsPerPage, totalRows);
+
+    // Display the rows for the current page
+    for (let i = startIndex; i < endIndex; i++) {
+        rows[i].style.display = "";
+    }
+
+    // Update pagination info
+    document.getElementById("pageInfo").textContent = `Page ${currentPage} of ${totalPages}`;
+
+    // Disable/Enable pagination buttons
+    document.getElementById("prevPage").disabled = currentPage === 1;
+    document.getElementById("nextPage").disabled = currentPage === totalPages;
+
+    // Create dynamic page number buttons
+    createPageButtons(totalPages);
+}
+
+function createPageButtons(totalPages) {
+    const pageButtonsContainer = document.getElementById("pageButtons");
+    pageButtonsContainer.innerHTML = ''; // Clear existing buttons
+
+    for (let i = 1; i <= totalPages; i++) {
+        const button = document.createElement("button");
+        button.textContent = i;
+        button.classList.add("page-button");
+        if (i === currentPage) {
+            button.disabled = true; // Disable current page button
+        }
+        button.addEventListener("click", () => {
+            currentPage = i;
+            displayProductTable();
+        });
+        pageButtonsContainer.appendChild(button);
+    }
+}
+
+function setupPagination() {
+    document.getElementById("prevPage").addEventListener("click", () => {
+        if (currentPage > 1) {
+            currentPage--;
+            displayProductTable();
+        }
+    });
+
+    document.getElementById("nextPage").addEventListener("click", () => {
+        const totalRows = document.getElementById("productTable").getElementsByTagName("tbody")[0].getElementsByTagName("tr").length;
+        const totalPages = Math.ceil(totalRows / rowsPerPage);
+        if (currentPage < totalPages) {
+            currentPage++;
+            displayProductTable();
+        }
+    });
+
+    displayProductTable();
+}
+
+setupPagination();
+
+        
         function searchFunction() {
             const input = document.getElementById('searchInput');
             const filter = input.value.toLowerCase();
@@ -187,6 +269,7 @@
                 tr[i].style.display = match ? '' : 'none';
             }
         }
+        
     </script>
 </body>
 </html>
